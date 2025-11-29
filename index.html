@@ -1,555 +1,438 @@
-import * as React from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIVE Marketing Agency - Premium Solutions</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define HIVE Brand Colors */
+        :root {
+            --hive-gold: #C58940;
+            --hive-gold-hover: #AA7538;
+            --hive-beige: #FAF5E9;
+            --hive-dark-bg: #1E1C1A;
+            --hive-dark-text: #3C2F2F;
+        }
 
-// --- HIVE Custom Colors (Used throughout the components) ---
-const HIVE_GOLD = '#C58940';     // Rich Honey Gold Accent (New: Less brown, more golden)
-const HIVE_GOLD_HOVER = '#AA7538'; // Darker Gold for Hover
-const HIVE_BEIGE = '#FAF5E9';    // Light, Premium Background
-const HIVE_DARK_BG = '#1E1C1A';  // Deep Espresso/Brown for Dark Sections
-const HIVE_DARK_TEXT = '#3C2F2F'; // Primary Text Color (Kept dark for contrast)
+        /* Set default font and background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--hive-beige);
+            color: var(--hive-dark-text);
+            scroll-behavior: smooth;
+        }
 
-// --- Mock Utility Components (Styled with HIVE colors) ---
-const cn = (...classes) => classes.filter(Boolean).join(' ');
+        /* Apply custom colors using Tailwind utility classes */
+        .bg-hive-beige { background-color: var(--hive-beige); }
+        .bg-hive-dark { background-color: var(--hive-dark-bg); }
+        .text-hive-gold { color: var(--hive-gold); }
+        .text-hive-dark { color: var(--hive-dark-text); }
+        .border-hive-gold { border-color: var(--hive-gold); }
+        .hover\:bg-hive-gold:hover { background-color: var(--hive-gold); }
+        .hover\:bg-hive-gold-hover:hover { background-color: var(--hive-gold-hover); }
+        .hover\:text-hive-gold:hover { color: var(--hive-gold); }
 
-const Button = ({ children, className = '', variant = 'default', ...props }) => {
-    let baseStyle = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50";
-    
-    // Applying styles directly via inline style for dynamic hex values since Tailwind config is not available
-    const styleMap = {
-        default: { backgroundColor: HIVE_GOLD, color: '#FFFFFF' },
-        outline: { borderColor: HIVE_GOLD, color: HIVE_GOLD, backgroundColor: 'transparent' }
-    };
+        /* Custom button classes to use variables */
+        .btn-gold {
+            background-color: var(--hive-gold);
+            color: #FFFFFF;
+            transition: background-color 0.2s;
+        }
+        .btn-gold:hover {
+            background-color: var(--hive-gold-hover);
+        }
+        .btn-outline {
+            border: 1px solid var(--hive-gold);
+            color: var(--hive-gold);
+            transition: background-color 0.2s;
+        }
+        .btn-outline:hover {
+            background-color: rgba(197, 137, 64, 0.05); /* Light gold hover effect */
+        }
+    </style>
+    <script>
+        // Lucide Icons (inlined SVG definitions for reuse)
+        const icons = {
+            Menu: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>`,
+            Close: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>`,
+            Search: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>`,
+            Dollar: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>`,
+            File: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2" /><path d="M10 2v4" /><path d="M6 2v2" /><rect x="6" y="8" width="12" height="12" rx="1" ry="1" /></svg>`,
+            Automation: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M7 11.5l1.5 1.5 4-4" /><path d="M15 11.5l1.5 1.5 4-4" /><path d="M7 17.5l1.5 1.5 4-4" /></svg>`,
+            Check: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>`,
+            Pen: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>`,
+            Edit: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>`,
+            Shield: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>`
+        };
+    </script>
+</head>
+<body class="bg-hive-beige text-hive-dark">
 
-    return (
-        <button
-            className={cn(baseStyle, 'px-6 py-3', className)}
-            style={styleMap[variant]}
-            {...props}
-        >
-            {children}
-        </button>
-    );
-};
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm border-b">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo - Only text name remains -->
+            <a href="#home" class="flex items-center text-xl font-bold text-hive-dark">
+                <span>HIVE Marketing</span>
+            </a>
 
-const Card = ({ children, className = '', ...props }) => (
-    <div className={cn(`rounded-xl border border-gray-200 bg-white shadow-lg p-6 flex flex-col gap-4`, className)} style={{color: HIVE_DARK_TEXT}} {...props}>
-        {children}
-    </div>
-);
-const CardHeader = ({ children, className = '' }) => (
-    <div className={cn("flex flex-col space-y-1.5", className)}>{children}</div>
-);
-const CardTitle = ({ children, className = '' }) => (
-    <h3 className={cn("text-xl font-bold tracking-tight", className)} style={{color: HIVE_DARK_TEXT}}>{children}</h3>
-);
-const CardDescription = ({ children, className = '' }) => (
-    <p className={cn("text-sm text-gray-600", className)}>{children}</p>
-);
-const CardContent = ({ children, className = '' }) => (
-    <div className={cn("p-0 pt-0", className)}>{children}</div>
-);
-
-const Input = ({ className = '', type = 'text', placeholder = '', ...props }) => (
-    <input
-        type={type}
-        className={cn("flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2", className)}
-        style={{ '--tw-ring-color': HIVE_GOLD }}
-        placeholder={placeholder}
-        {...props}
-    />
-);
-
-const Textarea = ({ className = '', placeholder = '', ...props }) => (
-    <textarea
-        className={cn("flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2", className)}
-        style={{ '--tw-ring-color': HIVE_GOLD }}
-        placeholder={placeholder}
-        {...props}
-    />
-);
-
-// --- HIVE-Specific Icons (Kept but not used in Header) ---
-
-const HiveIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-        <path d="M18 5L12 2L6 5V15L12 18L18 15V5Z" />
-        <path d="M12 2v16" />
-        <path d="M6 5l12 10" />
-        <path d="M6 15l12-10" />
-    </svg>
-);
-const MenuIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
-);
-const CloseIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-);
-
-// --- Content Sections ---
-
-const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    
-    const navItems = [
-        { name: 'Services', href: '#services' },
-        { name: 'Results', href: '#stats' },
-        { name: 'Process', href: '#process' },
-        { name: 'Deliverables', href: '#deliverables' },
-    ];
-
-    return (
-        <header className={`sticky top-0 z-50 bg-white/90 backdrop-blur-sm shadow-sm border-b`}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                {/* Logo - Icon removed, only text name remains */}
-                <a href="#home" className={`flex items-center text-xl font-bold`} style={{color: HIVE_DARK_TEXT}}>
-                    <span>HIVE Marketing</span>
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#services" class="text-sm font-medium text-gray-700 hover:text-hive-gold transition-colors">Services</a>
+                <a href="#stats" class="text-sm font-medium text-gray-700 hover:text-hive-gold transition-colors">Results</a>
+                <a href="#process" class="text-sm font-medium text-gray-700 hover:text-hive-gold transition-colors">Process</a>
+                <a href="#deliverables" class="text-sm font-medium text-gray-700 hover:text-hive-gold transition-colors">Deliverables</a>
+                <a href="#cta" class="ml-4 px-6 py-3 rounded-md shadow-md btn-gold">
+                    Start Growing
                 </a>
+            </nav>
 
-                {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center space-x-6">
-                    {navItems.map((item) => (
-                        <a 
-                            key={item.name} 
-                            href={item.href} 
-                            className={`text-sm font-medium text-gray-700 hover:text-[${HIVE_GOLD}] transition-colors`}
-                            style={{ '--tw-text-opacity': 1, '--tw-text-color': HIVE_DARK_TEXT }}
-                        >
-                            {item.name}
-                        </a>
-                    ))}
-                    <Button 
-                        className="ml-4" 
-                        style={{ backgroundColor: HIVE_GOLD, color: '#FFFFFF' }}
-                        onClick={() => document.getElementById('cta').scrollIntoView({ behavior: 'smooth' })}
-                    >
-                        Start Growing
-                    </Button>
-                </nav>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-800 hover:bg-gray-100" aria-label="Toggle menu">
+                <div id="menu-icon" class="size-5"></div>
+            </button>
+        </div>
 
-                {/* Mobile Menu Button */}
-                <Button
-                    variant="ghost"
-                    className="md:hidden text-gray-800"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                    {isMenuOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
-                    <span className="sr-only">Toggle menu</span>
-                </Button>
-            </div>
+        <!-- Mobile Menu Content -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 border-t shadow-lg absolute w-full p-4">
+            <nav class="flex flex-col space-y-2">
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Services</a>
+                <a href="#stats" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Results</a>
+                <a href="#process" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Process</a>
+                <a href="#deliverables" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Deliverables</a>
+                <a href="#cta" class="mt-4 px-6 py-3 rounded-md shadow-md btn-gold text-center mobile-nav-link">
+                    Start Growing
+                </a>
+            </nav>
+        </div>
+    </header>
 
-            {/* Mobile Menu Content */}
-            {isMenuOpen && (
-                <div className="md:hidden bg-white/95 border-t shadow-lg absolute w-full p-4">
-                    <nav className="flex flex-col space-y-2">
-                        {navItems.map((item) => (
-                            <a 
-                                key={item.name} 
-                                href={item.href} 
-                                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                {item.name}
-                            </a>
-                        ))}
-                        <Button 
-                            className="mt-4" 
-                            style={{ backgroundColor: HIVE_GOLD, color: '#FFFFFF' }}
-                            onClick={() => { setIsMenuOpen(false); document.getElementById('cta').scrollIntoView({ behavior: 'smooth' }); }}
-                        >
-                            Start Growing
-                        </Button>
-                    </nav>
-                </div>
-            )}
-        </header>
-    );
-};
-
-const Hero = () => {
-    return (
-        <section id="home" className={`py-20 md:py-32`} style={{backgroundColor: HIVE_BEIGE}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12">
-                
-                {/* Text Content */}
-                <div className="lg:w-1/2 text-center lg:text-left">
-                    <h1 className={`text-5xl md:text-6xl font-extrabold leading-tight mb-4`} style={{color: HIVE_DARK_TEXT}}>
-                        <span style={{color: HIVE_GOLD}}>Precision</span> Digital Marketing.
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="py-20 md:py-32 bg-hive-beige">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2 text-center lg:text-left">
+                    <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4 text-hive-dark">
+                        <span class="text-hive-gold">Precision</span> Digital Marketing.
                     </h1>
-                    <p className="text-xl text-gray-700 mb-8 max-w-xl mx-auto lg:mx-0">
+                    <p class="text-xl text-gray-700 mb-8 max-w-xl mx-auto lg:mx-0">
                         We transform data into dynamic growth strategies, delivering measurable ROI for ambitious businesses.
                     </p>
-                    <div className="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-                        <Button 
-                            size="lg" 
-                            style={{ backgroundColor: HIVE_GOLD, color: '#FFFFFF' }}
-                            onClick={() => document.getElementById('cta').scrollIntoView({ behavior: 'smooth' })}
-                        >
+                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#cta" class="px-8 py-3 rounded-xl shadow-lg btn-gold text-lg">
                             Book Strategy Session
-                        </Button>
-                        <Button 
-                            size="lg" 
-                            variant="outline" 
-                            style={{ borderColor: HIVE_GOLD, color: HIVE_GOLD }}
-                            onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
-                        >
+                        </a>
+                        <a href="#services" class="px-8 py-3 rounded-xl shadow-md btn-outline text-lg">
                             View Our Services
-                        </Button>
+                        </a>
                     </div>
                 </div>
 
-                {/* Illustration/Image - Updated with HIVE/Honey Gold colors */}
-                <div className="lg:w-1/2 w-full max-w-lg">
-                    <svg className="w-full h-auto" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="20" y="20" width="360" height="260" rx="15" fill="#FFFFFF" stroke="#D1CFC7" strokeWidth="2"/>
+                <!-- Illustration/Image -->
+                <div class="lg:w-1/2 w-full max-w-lg">
+                    <svg class="w-full h-auto" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="20" width="360" height="260" rx="15" fill="#FFFFFF" stroke="#D1CFC7" stroke-width="2"/>
                         <rect x="40" y="50" width="320" height="180" rx="10" fill="#F0EAD6"/>
-
-                        {/* Chart elements */}
-                        <line x1="40" y1="230" x2="360" y2="230" stroke="#D1CFC7" strokeWidth="2"/>
-                        
-                        {/* Data Points (Line Graph) */}
+                        <line x1="40" y1="230" x2="360" y2="230" stroke="#D1CFC7" stroke-width="2"/>
                         <polyline points="50,190 120,130 190,160 260,100 330,80" 
-                                stroke={HIVE_GOLD} strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                stroke="var(--hive-gold)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <animate attributeName="stroke-dasharray" values="0 500; 500 0" dur="2s" fill="freeze" />
                         </polyline>
-                        <circle cx="50" cy="190" r="5" fill={HIVE_GOLD} />
-                        <circle cx="120" cy="130" r="5" fill={HIVE_GOLD} />
-                        <circle cx="190" cy="160" r="5" fill={HIVE_GOLD} />
-                        <circle cx="260" cy="100" r="5" fill={HIVE_GOLD} />
-                        <circle cx="330" cy="80" r="5" fill={HIVE_GOLD} />
-
-                        {/* Magnifying Glass (Strategy) */}
+                        <circle cx="50" cy="190" r="5" fill="var(--hive-gold)" />
+                        <circle cx="120" cy="130" r="5" fill="var(--hive-gold)" />
+                        <circle cx="190" cy="160" r="5" fill="var(--hive-gold)" />
+                        <circle cx="260" cy="100" r="5" fill="var(--hive-gold)" />
+                        <circle cx="330" cy="80" r="5" fill="var(--hive-gold)" />
                         <g transform="translate(280 180) scale(0.6)">
-                            <circle cx="25" cy="25" r="20" stroke={HIVE_DARK_TEXT} strokeWidth="4" fill="#FEECCB"/>
-                            <line x1="40" y1="40" x2="60" y2="60" stroke={HIVE_DARK_TEXT} strokeWidth="4" strokeLinecap="round"/>
+                            <circle cx="25" cy="25" r="20" stroke="var(--hive-dark-text)" stroke-width="4" fill="#FEECCB"/>
+                            <line x1="40" y1="40" x2="60" y2="60" stroke="var(--hive-dark-text)" stroke-width="4" stroke-linecap="round"/>
                         </g>
                     </svg>
                 </div>
             </div>
         </section>
-    );
-};
 
-const Services = () => {
-    const serviceList = [
-        { 
-            title: "Performance SEO", 
-            description: "Drive highly qualified organic traffic with technical optimization and authority-building content.",
-            icon: () => (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            )
-        },
-        { 
-            title: "Paid Media Mastery", 
-            description: "Maximize ROAS across Google Ads, Meta, and LinkedIn with continuous A/B testing and precision targeting.",
-            icon: () => (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-            )
-        },
-        { 
-            title: "Creative Content Strategy", 
-            description: "Engage your audience with high-value blog posts, case studies, and video concepts that convert leads.",
-            icon: () => (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2" /><path d="M10 2v4" /><path d="M6 2v2" /><rect x="6" y="8" width="12" height="12" rx="1" ry="1" /></svg>
-            )
-        },
-        { 
-            title: "Marketing Automation", 
-            description: "Set up personalized email sequences and sales workflows to nurture leads and scale customer engagement.",
-            icon: () => (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M7 11.5l1.5 1.5 4-4" /><path d="M15 11.5l1.5 1.5 4-4" /><path d="M7 17.5l1.5 1.5 4-4" /></svg>
-            )
-        }
-    ];
-
-    return (
-        <section id="services" className={`py-20 md:py-32`} style={{backgroundColor: HIVE_BEIGE}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                    <h2 className={`text-4xl font-extrabold`} style={{color: HIVE_DARK_TEXT}}>What We Do Best</h2>
-                    <p className="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
+        <!-- Services Section -->
+        <section id="services" class="py-20 md:py-32 bg-hive-beige">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-extrabold text-hive-dark">What We Do Best</h2>
+                    <p class="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
                         Our integrated approach covers the full digital landscape, ensuring every touchpoint drives towards your business goals.
                     </p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {serviceList.map((service, index) => (
-                        <Card key={index} className="hover:shadow-xl transition-shadow duration-300">
-                            <CardHeader>
-                                <div className="mb-2" style={{color: HIVE_GOLD}}>{service.icon()}</div>
-                                <CardTitle>{service.title}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <CardDescription className="text-gray-700">{service.description}</CardDescription>
-                            </CardContent>
-                        </Card>
-                    ))}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Service Card 1: SEO -->
+                    <div class="rounded-xl border border-gray-200 bg-white shadow-lg p-6 flex flex-col gap-4 hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-hive-gold" data-icon="Search"></div>
+                        <h3 class="text-xl font-bold tracking-tight text-hive-dark">Performance SEO</h3>
+                        <p class="text-sm text-gray-700">Drive highly qualified organic traffic with technical optimization and authority-building content.</p>
+                    </div>
+                    <!-- Service Card 2: Paid Media -->
+                    <div class="rounded-xl border border-gray-200 bg-white shadow-lg p-6 flex flex-col gap-4 hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-hive-gold" data-icon="Dollar"></div>
+                        <h3 class="text-xl font-bold tracking-tight text-hive-dark">Paid Media Mastery</h3>
+                        <p class="text-sm text-gray-700">Maximize ROAS across Google Ads, Meta, and LinkedIn with continuous A/B testing and precision targeting.</p>
+                    </div>
+                    <!-- Service Card 3: Content Strategy -->
+                    <div class="rounded-xl border border-gray-200 bg-white shadow-lg p-6 flex flex-col gap-4 hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-hive-gold" data-icon="File"></div>
+                        <h3 class="text-xl font-bold tracking-tight text-hive-dark">Creative Content Strategy</h3>
+                        <p class="text-sm text-gray-700">Engage your audience with high-value blog posts, case studies, and video concepts that convert leads.</p>
+                    </div>
+                    <!-- Service Card 4: Automation -->
+                    <div class="rounded-xl border border-gray-200 bg-white shadow-lg p-6 flex flex-col gap-4 hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-hive-gold" data-icon="Automation"></div>
+                        <h3 class="text-xl font-bold tracking-tight text-hive-dark">Marketing Automation</h3>
+                        <p class="text-sm text-gray-700">Set up personalized email sequences and sales workflows to nurture leads and scale customer engagement.</p>
+                    </div>
                 </div>
             </div>
         </section>
-    );
-};
 
-const Stats = () => {
-    const statsList = [
-        { number: '3.5x', label: 'Average ROAS' },
-        { number: '+180%', label: 'Organic Traffic Growth' },
-        { number: '95%', label: 'Client Retention Rate' },
-        { number: '600+', label: 'Successful Campaigns' },
-    ];
-
-    return (
-        <section id="stats" className={`py-20 text-white`} style={{backgroundColor: HIVE_DARK_BG}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                    {statsList.map((stat, index) => (
-                        <div key={index} className="p-4">
-                            <h3 className="text-5xl font-extrabold mb-1" style={{color: HIVE_GOLD}}>
-                                {stat.number}
-                            </h3>
-                            <p className="text-lg font-medium text-gray-300">
-                                {stat.label}
-                            </p>
-                        </div>
-                    ))}
+        <!-- Stats Section (Dark background) -->
+        <section id="stats" class="py-20 text-white bg-hive-dark">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    <div class="p-4">
+                        <h3 class="text-5xl font-extrabold mb-1 text-hive-gold">3.5x</h3>
+                        <p class="text-lg font-medium text-gray-300">Average ROAS</p>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-5xl font-extrabold mb-1 text-hive-gold">+180%</h3>
+                        <p class="text-lg font-medium text-gray-300">Organic Traffic Growth</p>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-5xl font-extrabold mb-1 text-hive-gold">95%</h3>
+                        <p class="text-lg font-medium text-gray-300">Client Retention Rate</p>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-5xl font-extrabold mb-1 text-hive-gold">600+</h3>
+                        <p class="text-lg font-medium text-gray-300">Successful Campaigns</p>
+                    </div>
                 </div>
             </div>
         </section>
-    );
-};
 
-const Deliverables = () => {
-    return (
-        <section id="deliverables" className={`py-20 md:py-32`} style={{backgroundColor: HIVE_BEIGE}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                    <h2 className={`text-4xl font-extrabold`} style={{color: HIVE_DARK_TEXT}}>What You Get: Tangible Deliverables</h2>
-                    <p className="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
+        <!-- Deliverables Section -->
+        <section id="deliverables" class="py-20 md:py-32 bg-hive-beige">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-extrabold text-hive-dark">What You Get: Tangible Deliverables</h2>
+                    <p class="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
                         Beyond the numbers, here are the actionable items we build and manage for you.
                     </p>
                 </div>
 
-                <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                    {/* Deliverable 1 */}
-                    <div className="flex items-start space-x-4">
-                        <div className="shrink-0 pt-1" style={{color: HIVE_GOLD}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                        </div>
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                    <!-- Deliverable 1 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="shrink-0 pt-1 text-hive-gold" data-icon="Check"></div>
                         <div>
-                            <h3 className={`text-lg font-semibold`} style={{color: HIVE_DARK_TEXT}}>Weekly Performance Reports</h3>
-                            <p className="text-gray-700 text-sm">Clear, digestible reports showing progress against KPIs, not vanity metrics.</p>
+                            <h3 class="text-lg font-semibold text-hive-dark">Weekly Performance Reports</h3>
+                            <p class="text-gray-700 text-sm">Clear, digestible reports showing progress against KPIs, not vanity metrics.</p>
                         </div>
                     </div>
-                    {/* Deliverable 2 */}
-                    <div className="flex items-start space-x-4">
-                        <div className="shrink-0 pt-1" style={{color: HIVE_GOLD}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>
-                        </div>
+                    <!-- Deliverable 2 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="shrink-0 pt-1 text-hive-gold" data-icon="Pen"></div>
                         <div>
-                            <h3 className={`text-lg font-semibold`} style={{color: HIVE_DARK_TEXT}}>Comprehensive Content Calendars</h3>
-                            <p className="text-gray-700 text-sm">A full 90-day plan of blog posts, social creatives, and landing page copy.</p>
+                            <h3 class="text-lg font-semibold text-hive-dark">Comprehensive Content Calendars</h3>
+                            <p class="text-gray-700 text-sm">A full 90-day plan of blog posts, social creatives, and landing page copy.</p>
                         </div>
                     </div>
-                    {/* Deliverable 3 */}
-                    <div className="flex items-start space-x-4">
-                        <div className="shrink-0 pt-1" style={{color: HIVE_GOLD}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
-                        </div>
+                    <!-- Deliverable 3 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="shrink-0 pt-1 text-hive-gold" data-icon="Edit"></div>
                         <div>
-                            <h3 className={`text-lg font-semibold`} style={{color: HIVE_DARK_TEXT}}>Optimized Ad Creative & Copy</h3>
-                            <p className="text-gray-700 text-sm">High-performing ad creative variations and compelling copy tested weekly for efficiency.</p>
+                            <h3 class="text-lg font-semibold text-hive-dark">Optimized Ad Creative & Copy</h3>
+                            <p class="text-gray-700 text-sm">High-performing ad creative variations and compelling copy tested weekly for efficiency.</p>
                         </div>
                     </div>
-                    {/* Deliverable 4 */}
-                    <div className="flex items-start space-x-4">
-                        <div className="shrink-0 pt-1" style={{color: HIVE_GOLD}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                        </div>
+                    <!-- Deliverable 4 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="shrink-0 pt-1 text-hive-gold" data-icon="Shield"></div>
                         <div>
-                            <h3 className={`text-lg font-semibold`} style={{color: HIVE_DARK_TEXT}}>Monthly Strategy Review</h3>
-                            <p className="text-gray-700 text-sm">Dedicated call to review progress, pivot strategy, and plan the next 30 days of action.</p>
+                            <h3 class="text-lg font-semibold text-hive-dark">Monthly Strategy Review</h3>
+                            <p class="text-gray-700 text-sm">Dedicated call to review progress, pivot strategy, and plan the next 30 days of action.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    );
-};
 
-const Process = () => {
-    const steps = [
-        { 
-            number: 1, 
-            title: "Discovery & Audit", 
-            description: "Deep dive into your current marketing stack, audience, and competitors to define clear, measurable objectives." 
-        },
-        { 
-            number: 2, 
-            title: "Strategy & Planning", 
-            description: "Develop a custom, full-funnel strategy focusing on quick wins and sustainable, long-term growth channels." 
-        },
-        { 
-            number: 3, 
-            title: "Execution & Launch", 
-            description: "Implement campaigns across all chosen channels—from technical setup to creative production and launch." 
-        },
-        { 
-            number: 4, 
-            title: "Optimize & Report", 
-            description: "Continuously monitor performance, refine targeting, and pivot tactics based on real-time conversion data." 
-        }
-    ];
-
-    return (
-        <section id="process" className={`py-20 md:py-32 bg-white`}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <h2 className={`text-4xl font-extrabold`} style={{color: HIVE_DARK_TEXT}}>Our 4-Step Growth Process</h2>
-                    <p className="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
+        <!-- Process Section -->
+        <section id="process" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-extrabold text-hive-dark">Our 4-Step Growth Process</h2>
+                    <p class="text-lg text-gray-700 max-w-3xl mx-auto mt-3">
                         We follow a proven methodology designed for efficiency, transparency, and impact.
                     </p>
                 </div>
 
-                <div className="relative max-w-5xl mx-auto">
-                    {/* Vertical Connector Line */}
-                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 hidden lg:block -translate-x-1/2"></div>
+                <div class="relative max-w-5xl mx-auto">
+                    <!-- Vertical Connector Line -->
+                    <div class="absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 hidden lg:block -translate-x-1/2"></div>
                     
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-16">
-                        {steps.map((step, index) => (
-                            <div key={index} className={cn(
-                                "flex flex-col gap-4 relative",
-                                index % 2 === 0 ? "lg:text-right lg:pr-16" : "lg:text-left lg:pl-16",
-                            )}>
-                                {/* Step Circle (Gold) */}
-                                <div className={cn(
-                                    `absolute left-0 lg:left-1/2 top-0 size-10 flex items-center justify-center rounded-full border-4 border-white text-white font-bold text-lg shadow-xl -translate-x-1/2`,
-                                    index % 2 === 0 ? "lg:translate-x-1/2" : "lg:-translate-x-1/2",
-                                )} style={{backgroundColor: HIVE_GOLD}}>
-                                    {step.number}
-                                </div>
-
-                                {/* Content Card */}
-                                <Card className={cn(
-                                    "mt-6 lg:mt-0 p-6 shadow-2xl",
-                                    index % 2 === 0 ? "lg:col-start-1" : "lg:col-start-2"
-                                )}>
-                                    <CardTitle style={{color: HIVE_GOLD}}>{step.title}</CardTitle>
-                                    <CardDescription className="text-base text-gray-700">{step.description}</CardDescription>
-                                </Card>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-y-16">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col gap-4 relative lg:text-right lg:pr-16">
+                            <div class="absolute left-0 lg:left-1/2 top-0 size-10 flex items-center justify-center rounded-full border-4 border-white text-white font-bold text-lg shadow-xl -translate-x-1/2 lg:translate-x-1/2 btn-gold">1</div>
+                            <div class="mt-6 lg:mt-0 p-6 shadow-2xl bg-white rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold text-hive-gold">Discovery & Audit</h3>
+                                <p class="text-base text-gray-700 mt-2">Deep dive into your current marketing stack, audience, and competitors to define clear, measurable objectives.</p>
                             </div>
-                        ))}
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col gap-4 relative lg:text-left lg:pl-16">
+                            <div class="absolute left-0 lg:left-1/2 top-0 size-10 flex items-center justify-center rounded-full border-4 border-white text-white font-bold text-lg shadow-xl -translate-x-1/2 lg:-translate-x-1/2 btn-gold">2</div>
+                            <div class="mt-6 lg:mt-0 p-6 shadow-2xl bg-white rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold text-hive-gold">Strategy & Planning</h3>
+                                <p class="text-base text-gray-700 mt-2">Develop a custom, full-funnel strategy focusing on quick wins and sustainable, long-term growth channels.</p>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="flex flex-col gap-4 relative lg:text-right lg:pr-16">
+                            <div class="absolute left-0 lg:left-1/2 top-0 size-10 flex items-center justify-center rounded-full border-4 border-white text-white font-bold text-lg shadow-xl -translate-x-1/2 lg:translate-x-1/2 btn-gold">3</div>
+                            <div class="mt-6 lg:mt-0 p-6 shadow-2xl bg-white rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold text-hive-gold">Execution & Launch</h3>
+                                <p class="text-base text-gray-700 mt-2">Implement campaigns across all chosen channels—from technical setup to creative production and launch.</p>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="flex flex-col gap-4 relative lg:text-left lg:pl-16">
+                            <div class="absolute left-0 lg:left-1/2 top-0 size-10 flex items-center justify-center rounded-full border-4 border-white text-white font-bold text-lg shadow-xl -translate-x-1/2 lg:-translate-x-1/2 btn-gold">4</div>
+                            <div class="mt-6 lg:mt-0 p-6 shadow-2xl bg-white rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold text-hive-gold">Optimize & Report</h3>
+                                <p class="text-base text-gray-700 mt-2">Continuously monitor performance, refine targeting, and pivot tactics based on real-time conversion data.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    );
-};
 
-const CTA = () => {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [message, setMessage] = React.useState('');
-    const [status, setStatus] = React.useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setStatus('Sending...');
-        // Simulate API call delay
-        setTimeout(() => {
-            if (name && email && message) {
-                setStatus('Success! We will be in touch shortly.');
-                setName('');
-                setEmail('');
-                setMessage('');
-            } else {
-                setStatus('Please fill in all required fields.');
-            }
-        }, 1500);
-    };
-
-    return (
-        <section id="cta" className={`py-20 md:py-32 text-white`} style={{backgroundColor: HIVE_DARK_BG}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="max-w-3xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
-                    <div className="text-center mb-8">
-                        <h2 className={`text-3xl font-extrabold`} style={{color: HIVE_DARK_TEXT}}>Ready to Connect with HIVE?</h2>
-                        <p className="text-lg text-gray-700 mt-2">
+        <!-- CTA Section (Dark background) -->
+        <section id="cta" class="py-20 md:py-32 text-white bg-hive-dark">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-extrabold text-hive-dark">Ready to Connect with HIVE?</h2>
+                        <p class="text-lg text-gray-700 mt-2">
                             Schedule a free, no-obligation strategy session with our team.
                         </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <Input
-                            placeholder="Your Full Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                        <Input
-                            type="email"
-                            placeholder="Your Work Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <Textarea
-                            placeholder="Tell us about your project or main challenge..."
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            rows={4}
-                            required
-                        />
+                    <form id="contact-form" class="space-y-6">
+                        <input type="text" id="name" name="name" placeholder="Your Full Name" required class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2" style="--tw-ring-color: var(--hive-gold);">
+                        <input type="email" id="email" name="email" placeholder="Your Work Email" required class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2" style="--tw-ring-color: var(--hive-gold);">
+                        <textarea id="message" name="message" rows="4" placeholder="Tell us about your project or main challenge..." required class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2" style="--tw-ring-color: var(--hive-gold);"></textarea>
                         
-                        <Button 
-                            type="submit" 
-                            className="w-full text-lg h-12" 
-                            style={{ backgroundColor: HIVE_GOLD, color: '#FFFFFF' }}
-                            disabled={status === 'Sending...'}
-                        >
-                            {status === 'Sending...' ? 'Sending...' : 'Request Strategy Session'}
-                        </Button>
+                        <button type="submit" id="submit-btn" class="w-full text-lg h-12 rounded-md btn-gold">
+                            Request Strategy Session
+                        </button>
 
-                        {status && status !== 'Sending...' && (
-                            <p className={cn("text-center font-medium", status.startsWith('Success') ? 'text-green-600' : 'text-red-600')}>
-                                {status}
-                            </p>
-                        )}
+                        <p id="form-status" class="text-center font-medium mt-4"></p>
                     </form>
                 </div>
             </div>
         </section>
-    );
-};
 
-const Footer = () => {
-    return (
-        <footer className={`text-white py-12`} style={{backgroundColor: HIVE_DARK_BG}}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <div className="flex justify-center space-x-6 mb-6">
-                    <a href="#services" className={`text-gray-400 hover:text-white transition-colors`}>Services</a>
-                    <a href="#stats" className={`text-gray-400 hover:text-white transition-colors`}>Results</a>
-                    <a href="#process" className={`text-gray-400 hover:text-white transition-colors`}>Process</a>
-                    <a href="#cta" className={`text-gray-400 hover:text-white transition-colors`}>Contact</a>
-                </div>
-                <p className="text-gray-500 text-sm">
-                    © {new Date().getFullYear()} HIVE Marketing Agency. All rights reserved.
-                </p>
-            </div>
-        </footer>
-    );
-};
-
-// --- Main App Component ---
-
-export default function App() {
-  return (
-    <main className={`min-h-screen`} style={{backgroundColor: HIVE_BEIGE, color: HIVE_DARK_TEXT}}>
-      <Header />
-      <Hero />
-      <Services />
-      <Stats />
-      <Deliverables />
-      <Process />
-      <CTA />
-      <Footer />
     </main>
-  );
-}
+
+    <!-- Footer -->
+    <footer class="text-white py-12 bg-hive-dark">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#services" class="text-gray-400 hover:text-white transition-colors">Services</a>
+                <a href="#stats" class="text-gray-400 hover:text-white transition-colors">Results</a>
+                <a href="#process" class="text-gray-400 hover:text-white transition-colors">Process</a>
+                <a href="#cta" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+            </div>
+            <p class="text-gray-500 text-sm">
+                &copy; 2024 HIVE Marketing Agency. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Icon Injection ---
+            const iconMap = {
+                'Search': icons.Search, 'Dollar': icons.Dollar, 'File': icons.File, 'Automation': icons.Automation,
+                'Check': icons.Check, 'Pen': icons.Pen, 'Edit': icons.Edit, 'Shield': icons.Shield
+            };
+            document.querySelectorAll('[data-icon]').forEach(el => {
+                const iconName = el.getAttribute('data-icon');
+                if (icons[iconName]) {
+                    el.innerHTML = icons[iconName];
+                }
+            });
+            document.getElementById('menu-icon').innerHTML = icons.Menu;
+            
+            // --- Mobile Menu Toggle ---
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelectorAll('.mobile-nav-link');
+            const menuIconDiv = document.getElementById('menu-icon');
+            let isMenuOpen = false;
+
+            function toggleMenu() {
+                isMenuOpen = !isMenuOpen;
+                mobileMenu.classList.toggle('hidden');
+                menuIconDiv.innerHTML = isMenuOpen ? icons.Close : icons.Menu;
+            }
+
+            menuBtn.addEventListener('click', toggleMenu);
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (isMenuOpen) {
+                        toggleMenu();
+                    }
+                });
+            });
+
+            // --- Form Submission Handler ---
+            const contactForm = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const formStatus = document.getElementById('form-status');
+
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simple validation
+                if (!document.getElementById('name').value || !document.getElementById('email').value || !document.getElementById('message').value) {
+                    formStatus.textContent = "Please fill in all fields.";
+                    formStatus.style.color = 'red';
+                    return;
+                }
+
+                formStatus.textContent = "Sending...";
+                formStatus.style.color = 'var(--hive-gold)';
+                submitBtn.disabled = true;
+                const originalText = submitBtn.textContent;
+
+                setTimeout(() => {
+                    formStatus.textContent = 'Success! We will be in touch shortly.';
+                    formStatus.style.color = '#10b981'; // Using a standard success green
+                    submitBtn.textContent = "Sent!";
+
+                    // Resetting form and button after a delay
+                    setTimeout(() => {
+                        contactForm.reset();
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        formStatus.textContent = '';
+                    }, 3000);
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
